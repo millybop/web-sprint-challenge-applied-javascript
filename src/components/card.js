@@ -1,3 +1,5 @@
+import axios from "axios";
+
 const Card = (article) => {
   // TASK 5
   // ---------------------
@@ -16,7 +18,31 @@ const Card = (article) => {
   //     <span>By { authorName }</span>
   //   </div>
   // </div>
-  //
+  const divCard = document.createElement('div');
+  const divHeadline = document.createElement('div');
+  const divAuthor = document.createElement('div');
+  const divImage = document.createElement('div');
+  const image = document.createElement('img');
+  const spanAuthor = document.createElement('span');
+
+  divCard.classList.add('card');
+  divHeadline.classList.add('headline');
+  divAuthor.classList.add('author');
+  divImage.classList.add('img-container');
+
+  divHeadline.textContent = article.headline;
+  image.src = article.authorPhoto;
+  spanAuthor.textContent = article.authorName;
+
+  divCard.append( divHeadline, divAuthor );
+  divAuthor.append( divImage, spanAuthor );
+  divImage.appendChild( image );
+
+  divCard.addEventListener('click', () => {
+    console.log(divHeadline);
+  });
+  
+  return divCard;
 }
 
 const cardAppender = (selector) => {
@@ -27,7 +53,39 @@ const cardAppender = (selector) => {
   // However, the articles do not come organized in a single, neat array. Inspect the response closely!
   // Create a card from each and every article object in the response, using the Card component.
   // Append each card to the element in the DOM that matches the selector passed to the function.
-  //
+  axios.get('http://localhost:5001/api/articles')
+  .then( (res) => {
+    const classSelector = document.querySelector(selector);
+
+    const bootstrapArray = res.data.articles.bootstrap;
+    const javascriptArray = res.data.articles.javascript;
+    const jqueryArray = res.data.articles.jquery;
+    const nodeArray = res.data.articles.node;
+    const technologyArray = res.data.articles.technology;
+
+    bootstrapArray.forEach( item => {
+      classSelector.appendChild(Card(item));
+    })
+    javascriptArray.forEach( item => {
+      classSelector.appendChild(Card(item));
+    })
+    jqueryArray.forEach( item => {
+      classSelector.appendChild(Card(item));
+    })
+    nodeArray.forEach( item => {
+      classSelector.appendChild(Card(item));
+    })
+    technologyArray.forEach( item => {
+      classSelector.appendChild(Card(item));
+    })
+    return classSelector;
+  })
+  .catch( () => {
+    console.log('error');
+  })
+  .finally( () => {
+    console.log('done');
+  })
 }
 
 export { Card, cardAppender }
